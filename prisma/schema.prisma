@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Evento {
+  id           Int      @id @default(autoincrement())
+  titulo       String
+  tipo         String
+  tema         String
+  data         DateTime
+  horaInicio   String
+  horaFim      String
+  local        String
+  palestrante  String?
+  inscricoes   Inscricao[] // Um evento pode ter várias inscrições
+}
+
+model Inscricao {
+  id         Int      @id @default(autoincrement())
+  nomeAluno  String
+  emailAluno String
+  eventoId   Int
+  evento     Evento   @relation(fields: [eventoId], references: [id])
+
+  // Garante que um e-mail só pode se inscrever uma vez por evento
+  @@unique([eventoId, emailAluno])
+}
+
